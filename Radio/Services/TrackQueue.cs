@@ -19,6 +19,7 @@
         {
             Track track = _tracks[0];
             _tracks.RemoveAt(0);
+            _tracks.Add(track);
             return track;
         }
 

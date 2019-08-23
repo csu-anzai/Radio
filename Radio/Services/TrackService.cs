@@ -14,6 +14,7 @@
     public class TrackService : ITrackService
     {
         private readonly ITrackQueue _trackQueue;
+
         private readonly IHubContext<RadioHub> _radioHub;
 
         private readonly Timer _timer;

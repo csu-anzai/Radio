@@ -55,19 +55,19 @@
                 new Track
                 {
                     Id = "0yi5e25Fd-g",
-                    Length = TimeSpan.Parse("4:14"),
+                    Length = TimeSpan.Parse("0:4:14"),
                     Title = "[DnB] - Botnek & I See MONSTAS - Deeper Love [Monstercat Release]"
                 },
                 new Track
                 {
                     Id = "etHVz3ybuTc",
-                    Length = TimeSpan.Parse("4:24"),
+                    Length = TimeSpan.Parse("0:4:24"),
                     Title = "[Glitch Hop] - Stonebank - Chokehold (feat. Concept) [Monstercat EP Release]"
                 },
                 new Track
                 {
                     Id = "1wwHkaO9_Gk",
-                    Length = TimeSpan.Parse("2:33"),
+                    Length = TimeSpan.Parse("0:2:33"),
                     Title = "Topi - Backup (Tisoki Remix) [Monstercat FREE Release]"
                 }
             };
