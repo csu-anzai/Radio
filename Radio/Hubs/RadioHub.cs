@@ -14,25 +14,18 @@
         public RadioHub(ITrackService trackService)
         {
             _trackService = trackService;
-
-            trackService.TrackUpdated += async (sender, e) => await UpdateTrack(e.NewTrackId);
         }
 
         public async Task Played()
         {
-            Track currentTrack = _trackService.CurrentTrack;
-            await Clients.Caller.SendAsync("SyncTimeStamp", currentTrack.TimeStampSeconds);
+            TrackStatus currentTrackStatus = _trackService.CurrentTrackStatus;
+            await Clients.Caller.SendAsync("SyncTimeStamp", currentTrackStatus.TimeStampSeconds);
         }
 
         public async Task Connected()
         {
-            Track currentTrack = _trackService.CurrentTrack;
-            await Clients.Caller.SendAsync("SyncVideo", currentTrack.Id, currentTrack.TimeStampSeconds);
-        }
-
-        private async Task UpdateTrack(string newTrackId)
-        {
-            await Clients.All.SendAsync("UpdateTrack", newTrackId);
+            TrackStatus currentTrackStatus = _trackService.CurrentTrackStatus;
+            await Clients.Caller.SendAsync("SyncVideo", currentTrackStatus.CurrentTrackId, currentTrackStatus.TimeStampSeconds);
         }
     }
 }

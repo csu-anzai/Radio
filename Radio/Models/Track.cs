@@ -1,15 +1,13 @@
 ﻿namespace Radio.Models
 {
+    using System;
+
     public class Track
     {
-        public Track(string id, int timeStampSeconds)
-        {
-            Id = id;
-            TimeStampSeconds = timeStampSeconds;
-        }
+        public string Id { get; set; }
 
-        public string Id { get; }
+        public string Title { get; set; }
 
-        public int TimeStampSeconds { get; }
+        public TimeSpan Length { get; set; }
     }
 }

@@ -9,6 +9,6 @@
     {
         event EventHandler<TrackUpdatedEventArgs> TrackUpdated;
 
-        Track CurrentTrack { get; }
+        TrackStatus CurrentTrackStatus { get; }
     }
 }

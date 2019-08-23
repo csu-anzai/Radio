@@ -6,6 +6,7 @@ namespace Radio
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Hosting;
 
     using Radio.Hubs;
@@ -17,9 +18,12 @@ namespace Radio
     {
         private readonly IConfiguration _configuration;
 
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             _configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -37,7 +41,10 @@ namespace Radio
             services.AddMvc();
             services.AddSignalR();
 
+            services.AddTransient<IFileProvider>(_ => _webHostEnvironment.WebRootFileProvider);
+            services.AddTransient<ITrackLoader, TrackLoader>();
             services.AddSingleton<ITrackService, TrackService>();
+            services.AddSingleton<ITrackQueue, TrackQueue>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
