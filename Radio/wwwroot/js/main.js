@@ -1,5 +1,5 @@
 ﻿function onYouTubeIframeAPIReady() {
-    new YT.Player("player",
+    const player = new YT.Player("player",
         {
             width: "100%",
             height: "100%",
@@ -12,6 +12,16 @@
                 iv_load_policy: 3
             }
         });
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/radio")
+        .build();
+
+    connection.on("UpdateTrack", function(trackId) {
+            player.loadVideoById(trackId);
+        });
+
+    connection.start();
 
     onYouTubeIframeAPIReady = undefined;
 }

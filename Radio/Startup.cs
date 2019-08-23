@@ -5,11 +5,14 @@ namespace Radio
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
 
+    using Radio.Hubs;
+
     public class Startup
     {
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddSignalR();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -26,6 +29,11 @@ namespace Radio
             {
                 endpoints.MapControllerRoute(name: null,
                                              pattern: "{Controller=Home}/{Action=Index}");
+            });
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<RadioHub>("/radio");
             });
         }
     }
