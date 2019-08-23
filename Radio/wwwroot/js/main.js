@@ -1,5 +1,5 @@
 ﻿function onYouTubeIframeAPIReady() {
-    const player = new YT.Player("",
+    const player = new YT.Player("player",
         {
             width: "100%",
             height: "100%",
