@@ -6,6 +6,7 @@ namespace Radio
     using Microsoft.Extensions.Hosting;
 
     using Radio.Hubs;
+    using Radio.Services;
 
     public class Startup
     {
@@ -13,6 +14,8 @@ namespace Radio
         {
             services.AddMvc();
             services.AddSignalR();
+
+            services.AddSingleton<ITrackService, TrackService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
