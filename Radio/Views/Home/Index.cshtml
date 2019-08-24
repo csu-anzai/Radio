@@ -1,6 +1,20 @@
 ﻿<main>
-    <div id="player"></div>
+    <div class="track-list">
+        <ul class="list-group">
+        </ul>
+    </div>
+
+    <div class="player-wrapper">
+        <div id="player"></div>
+    </div>
 </main>
+
+@section NavbarContent
+{
+    <li class="nav-item" id="track-list-toggle">
+        <a class="nav-link" href="#">Track List</a>
+    </li>
+}
 
 @section Scripts
 {

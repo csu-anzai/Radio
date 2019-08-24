@@ -15,15 +15,31 @@
     </environment>
 </head>
 <body>
-    @RenderBody()
+<header>
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">Radio</a>
 
-    <environment names="Staging, Production">
-        <script src="~/lib/jquery/dist/jquery.slim.min.js"></script>
-    </environment>
-    <environment names="Development">
-        <script src="~/lib/jquery/dist/jquery.slim.js"></script>
-    </environment>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    @RenderSection("Scripts", required: false)
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                @RenderSection("NavbarContent", required: false)
+            </ul>
+        </div>
+    </nav>
+</header>
+
+@RenderBody()
+
+<environment names="Staging, Production">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</environment>
+<environment names="Development">
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+</environment>
+
+@RenderSection("Scripts", required: false)
 </body>
 </html>
