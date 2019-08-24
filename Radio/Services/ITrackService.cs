@@ -5,5 +5,7 @@
     public interface ITrackService
     {
         TrackStatus CurrentTrackStatus { get; }
+
+        Track CurrentTrack { get; }
     }
 }

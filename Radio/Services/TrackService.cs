@@ -19,8 +19,6 @@
 
         private readonly Stopwatch _stopwatch;
 
-        private Track _currentTrack;
-
         public TrackService(ITrackQueue trackQueue, IHubContext<RadioHub> radioHub)
         {
             _trackQueue = trackQueue;
@@ -32,15 +30,17 @@
             NextTrack();
         }
 
-        public TrackStatus CurrentTrackStatus => new TrackStatus(_currentTrack.Id, (int)_stopwatch.Elapsed.TotalSeconds);
+        public TrackStatus CurrentTrackStatus => new TrackStatus(CurrentTrack.Id, (int)_stopwatch.Elapsed.TotalSeconds);
+
+        public Track CurrentTrack { get; private set; }
 
         private async Task NextTrack()
         {
-            _currentTrack = _trackQueue.PopNext();
-            await _radioHub.Clients.All.SendAsync("UpdateTrack", _currentTrack.Id);
+            CurrentTrack = _trackQueue.PopNext();
+            await _radioHub.Clients.All.SendAsync("UpdateTrack", CurrentTrack.Id);
 
             _timer.Stop();
-            _timer.Interval = _currentTrack.Length.TotalMilliseconds;
+            _timer.Interval = CurrentTrack.Length.TotalMilliseconds;
             _timer.Start();
             _stopwatch.Restart();
         }
