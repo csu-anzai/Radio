@@ -46,9 +46,7 @@
             }
 
             playing = true;
-        }
-
-        if (event.data === YT.PlayerState.PAUSED) {
+        } else if (event.data === YT.PlayerState.PAUSED) {
             playing = false;
         }
     }
