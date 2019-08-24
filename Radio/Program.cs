@@ -1,19 +1,19 @@
 namespace Radio
 {
+    using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Hosting;
 
     public static class Program
     {
         private static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            CreateWebHostBuilder(args).Build().Run();
         }
 
-        private static IHostBuilder CreateHostBuilder(string[] args)
+        private static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
-            return Host.CreateDefaultBuilder(args)
-                       .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
+            return WebHost.CreateDefaultBuilder(args)
+                          .UseStartup<Startup>();
         }
     }
 }

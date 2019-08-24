@@ -1,13 +1,11 @@
 ﻿namespace Radio.Services
 {
-    using System;
     using System.Diagnostics;
     using System.Threading.Tasks;
     using System.Timers;
 
     using Microsoft.AspNetCore.SignalR;
 
-    using Radio.EventArgs;
     using Radio.Hubs;
     using Radio.Models;
 
@@ -33,8 +31,6 @@
 
             NextTrack();
         }
-
-        public event EventHandler<TrackUpdatedEventArgs> TrackUpdated;
 
         public TrackStatus CurrentTrackStatus => new TrackStatus(_currentTrack.Id, (int)_stopwatch.Elapsed.TotalSeconds);
 

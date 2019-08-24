@@ -20,10 +20,13 @@
 
         public IEnumerable<Track> LoadAllTracks()
         {
-            using Stream stream = _fileProvider.GetFileInfo("Tracks.json").CreateReadStream();
-            using StreamReader streamReader = new StreamReader(stream);
-
-            return JsonConvert.DeserializeObject<Track[]>(streamReader.ReadToEnd());
+            using (Stream stream = _fileProvider.GetFileInfo("wwwroot/Tracks.json").CreateReadStream())
+            {
+                using (StreamReader streamReader = new StreamReader(stream))
+                {
+                    return JsonConvert.DeserializeObject<Track[]>(streamReader.ReadToEnd());
+                }
+            }
         }
     }
 }
