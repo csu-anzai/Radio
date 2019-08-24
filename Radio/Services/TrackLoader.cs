@@ -1,5 +1,6 @@
 ﻿namespace Radio.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
 
@@ -24,8 +25,24 @@
             {
                 using (StreamReader streamReader = new StreamReader(stream))
                 {
-                    return JsonConvert.DeserializeObject<Track[]>(streamReader.ReadToEnd());
+                    Track[] tracks = JsonConvert.DeserializeObject<Track[]>(streamReader.ReadToEnd());
+                    Shuffle(tracks);
+                    return tracks;
                 }
+            }
+        }
+
+        private static void Shuffle<T>(T[] array)
+        {
+            Random random = new Random();
+
+            for (int index = 0; index < array.Length; index++)
+            {
+                int swapIndex = index + random.Next(array.Length - index);
+
+                T swapItem = array[swapIndex];
+                array[swapIndex] = array[index];
+                array[index] = swapItem;
             }
         }
     }
