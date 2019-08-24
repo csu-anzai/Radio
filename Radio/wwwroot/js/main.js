@@ -3,6 +3,7 @@
 
     let player;
     let playing = false;
+    let currentTrackId;
 
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/radio")
@@ -10,18 +11,22 @@
 
     connection.on("UpdateTrack",
         function(trackId) {
-            player.loadVideoById(trackId);
-            updateTrackList();
-        });
-
-    connection.on("SyncTimeStamp",
-        function(timeStampSeconds) {
-            player.seekTo(timeStampSeconds);
+            if (playing) {
+                player.loadVideoById(trackId);
+                currentTrackId = trackId;
+                updateTrackList();
+            }
         });
 
     connection.on("SyncVideo",
         function(trackId, timeStampSeconds) {
-            player.loadVideoById(trackId, timeStampSeconds);
+            if (currentTrackId === trackId) {
+                player.seekTo(timeStampSeconds);
+            } else {
+                player.loadVideoById(trackId, timeStampSeconds);
+                currentTrackId = trackId;
+            }
+
             updateTrackList();
         });
 
@@ -114,6 +119,9 @@
 
         toggleTrackListVisibility();
 
-        trackListToggleLink.click(toggleTrackListVisibility);
+        trackListToggleLink.click(function(event) {
+            toggleTrackListVisibility();
+            event.preventDefault();
+        });
     })();
 }

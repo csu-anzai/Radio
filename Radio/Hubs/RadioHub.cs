@@ -18,11 +18,15 @@
 
         public async Task Played()
         {
-            TrackStatus currentTrackStatus = _trackService.CurrentTrackStatus;
-            await Clients.Caller.SendAsync("SyncTimeStamp", currentTrackStatus.TimeStampSeconds);
+            await SyncClientToCurrentVideo();
         }
 
         public async Task Connected()
+        {
+            await SyncClientToCurrentVideo();
+        }
+
+        private async Task SyncClientToCurrentVideo()
         {
             TrackStatus currentTrackStatus = _trackService.CurrentTrackStatus;
             await Clients.Caller.SendAsync("SyncVideo", currentTrackStatus.CurrentTrackId, currentTrackStatus.TimeStampSeconds);
