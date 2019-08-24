@@ -5,6 +5,8 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
+    <link rel="icon" href="~/icon/radio.png"/>
+
     <environment names="Staging, Production">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="~/css/styles.min.css"/>
@@ -17,7 +19,10 @@
 <body>
 <header>
     <nav class="navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" asp-controller="Home" asp-action="Index">Radio</a>
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+            <img src="~/icon/radio.png" width="30" height="30" class="d-inline-block align-top" alt=""/>
+            Radio
+        </a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
