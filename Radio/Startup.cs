@@ -40,6 +40,7 @@ namespace Radio
 
             services.AddMvc();
             services.AddSignalR();
+            services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
 
             services.AddTransient(_ => _webHostEnvironment.ContentRootFileProvider);
             services.AddTransient<ITrackLoader, TrackLoader>();
@@ -64,20 +65,27 @@ namespace Radio
             }
 
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
 
             app.UseWebMarkupMin();
 
             app.UseAuthentication();
 
-            app.UseMvc(options =>
-            {
-                options.MapRoute(name: null,
-                                 template: "{Controller=Home}/{Action=Index}");
-            });
+            app.UseMvc();
 
             app.UseSignalR(routes =>
             {
                 routes.MapHub<RadioHub>("/radio");
+            });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:8080/");
+                }
             });
         }
     }

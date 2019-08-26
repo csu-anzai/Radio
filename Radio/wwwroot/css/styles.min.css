@@ -1,1 +1,0 @@
-html,body{margin:0;padding:0;height:100%}body{overflow:hidden;display:grid;grid-template-rows:auto 1fr}main{display:grid;grid-template-rows:1fr;max-height:94.25vh}main.video-and-track-list{grid-template-columns:25% 1fr}main.video-only{grid-template-columns:1fr}div.track-list,div.player-wrapper{padding:0}div.track-list{overflow-y:auto}li.list-group-item{border-radius:0}

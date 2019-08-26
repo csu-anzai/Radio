@@ -1,4 +1,4 @@
-﻿namespace Radio.Controllers.API
+﻿namespace Radio.ApiControllers
 {
     using System.Collections.Generic;
 
@@ -7,6 +7,7 @@
     using Radio.Models;
     using Radio.Services;
 
+    [ApiController]
     [Route("[Controller]")]
     public class TrackController : ControllerBase
     {
