@@ -7,7 +7,7 @@
     using Radio.Models;
     using Radio.Services;
 
-    public class RadioHub : Hub
+    public class RadioHub : Hub<IRadioClient>
     {
         private readonly ITrackStatusService _trackStatusService;
 
@@ -29,7 +29,7 @@
         private async Task SyncClientToCurrentVideo()
         {
             TrackStatus currentTrackStatus = _trackStatusService.CurrentTrackStatus;
-            await Clients.Caller.SendAsync("SyncVideo", currentTrackStatus.CurrentTrackId, currentTrackStatus.TimeStampSeconds);
+            await Clients.Caller.SyncVideo(currentTrackStatus.CurrentTrackId, currentTrackStatus.TimeStampSeconds);
         }
     }
 }

@@ -19,7 +19,7 @@
     {
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly IHubContext<RadioHub> _radioHub;
+        private readonly IHubContext<RadioHub, IRadioClient> _radioHub;
 
         private readonly Timer _timer;
 
@@ -27,7 +27,7 @@
 
         private Track _currentTrack;
 
-        public TrackService(IHubContext<RadioHub> radioHub, IServiceProvider serviceProvider, TrackStatusService trackStatusService)
+        public TrackService(IHubContext<RadioHub, IRadioClient> radioHub, IServiceProvider serviceProvider, TrackStatusService trackStatusService)
         {
             _serviceProvider = serviceProvider;
             _radioHub = radioHub;
@@ -68,7 +68,7 @@
                 _currentTrack = trackRepository.CurrentTrack;
             }
 
-            await _radioHub.Clients.All.SendAsync("UpdateTrack", _currentTrack.Id);
+            await _radioHub.Clients.All.UpdateTrack(_currentTrack.Id);
 
             _timer.Stop();
             _timer.Interval = _currentTrack.Length.TotalMilliseconds;
