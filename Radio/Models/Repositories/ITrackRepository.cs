@@ -5,12 +5,14 @@
 
     public interface ITrackRepository
     {
-        Track CurrentTrack { get; }
+        IQueryable<ChannelTrack> AllChannelTracksFor(Channel channel);
 
-        IQueryable<Track> TrackQueue { get; }
+        ChannelTrack CurrentChannelTrackFor(Channel channel);
 
-        Task AddTrack(Track track);
+        IQueryable<ChannelTrack> ChannelTrackQueueFor(Channel channel);
 
-        Task MoveToNextTrack();
+        Task AddTrack(Track track, Channel channel);
+
+        Task MoveToNextChannelTrack(Channel channel);
     }
 }

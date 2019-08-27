@@ -62,10 +62,13 @@
         {
             using (IServiceScope scope = _serviceProvider.CreateScope())
             {
+                var channelRepository = scope.ServiceProvider.GetService<IChannelRepository>();
                 var trackRepository = scope.ServiceProvider.GetService<ITrackRepository>();
 
-                await trackRepository.MoveToNextTrack();
-                _currentTrack = trackRepository.CurrentTrack;
+                Channel currentChannel = channelRepository.GetChannel(name: null, discriminator: 0);
+
+                await trackRepository.MoveToNextChannelTrack(currentChannel);
+                _currentTrack = trackRepository.CurrentChannelTrackFor(currentChannel).Track;
             }
 
             await _radioHub.Clients.All.UpdateTrack(_currentTrack.Id);

@@ -1,7 +1,10 @@
 ﻿namespace Radio.Models.Repositories
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+
+    using Microsoft.EntityFrameworkCore;
 
     using Radio.Models.Database;
 
@@ -14,32 +17,55 @@
             _appDbContext = appDbContext;
         }
 
-        public Track CurrentTrack => Tracks.Single(track => track.Order == 0);
-
-        public IQueryable<Track> TrackQueue => Tracks.Where(track => track.Order > 0).OrderBy(track => track.Order);
-
         private IQueryable<Track> Tracks => _appDbContext.Tracks;
 
-        public async Task AddTrack(Track track)
+        public IQueryable<ChannelTrack> AllChannelTracksFor(Channel channel)
         {
-            track.Order = Tracks.Count();
+            return Tracks.Include(track => track.ChannelTracks)
+                         .ThenInclude(channelTrack => channelTrack.Track)
+                         .Select(track => track.ChannelTracks.Single(channelTrack => channelTrack.ChannelId == channel.Id));
+        }
+
+        public ChannelTrack CurrentChannelTrackFor(Channel channel)
+        {
+            return AllChannelTracksFor(channel).Single(channelTrack => channelTrack.Order == 0);
+        }
+
+        public IQueryable<ChannelTrack> ChannelTrackQueueFor(Channel channel)
+        {
+            return AllChannelTracksFor(channel).Where(channelTrack => channelTrack.Order > 0).OrderBy(channelTrack => channelTrack.Order);
+        }
+
+        public async Task AddTrack(Track track, Channel channel)
+        {
+            if (track.ChannelTracks == null)
+            {
+                track.ChannelTracks = new List<ChannelTrack>();
+            }
+
+            track.ChannelTracks.Add(new ChannelTrack
+            {
+                ChannelId = channel.Id,
+                TrackId = track.Id,
+                Order = (uint)AllChannelTracksFor(channel).Count()
+            });
+
             _appDbContext.Tracks.Add(track);
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task MoveToNextTrack()
+        public async Task MoveToNextChannelTrack(Channel channel)
         {
-            Track currentTrack = CurrentTrack;
-            currentTrack.Order = Tracks.Count() - 1;
-            _appDbContext.Tracks.Update(currentTrack);
+            ChannelTrack currentChannelTrack = CurrentChannelTrackFor(channel);
+            currentChannelTrack.Order = (uint)(AllChannelTracksFor(channel).Count() - 1);
 
-            IQueryable<Track> trackQueue = TrackQueue;
-            foreach (Track track in trackQueue)
+            IQueryable<ChannelTrack> channelTrackQueue = ChannelTrackQueueFor(channel);
+            foreach (ChannelTrack channelTrack in channelTrackQueue)
             {
-                --track.Order;
+                --channelTrack.Order;
             }
-            _appDbContext.Tracks.UpdateRange(trackQueue);
 
+            _appDbContext.Channels.Update(channel);
             await _appDbContext.SaveChangesAsync();
         }
     }

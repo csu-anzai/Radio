@@ -40,6 +40,7 @@ namespace Radio
             services.AddSignalR();
             services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
 
+            services.AddTransient<IChannelRepository, ChannelRepository>();
             services.AddTransient<ITrackRepository, TrackRepository>();
             services.AddSingleton<TrackStatusService>();
             services.AddSingleton<ITrackStatusService>(serviceProvider => serviceProvider.GetService<TrackStatusService>());

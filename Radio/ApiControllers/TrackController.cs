@@ -12,23 +12,46 @@
     [Route("[Controller]")]
     public class TrackController : ControllerBase
     {
+        private readonly IChannelRepository _channelRepository;
+
         private readonly ITrackRepository _trackRepository;
 
-        public TrackController(ITrackRepository trackRepository)
+        public TrackController(IChannelRepository channelRepository, ITrackRepository trackRepository)
         {
+            _channelRepository = channelRepository;
             _trackRepository = trackRepository;
         }
 
-        [HttpGet("Current")]
-        public TrackTitle Current()
+        [HttpGet("Current/{channelId}")]
+        public ActionResult<TrackTitle> Current(string channelId)
         {
-            return _trackRepository.CurrentTrack.ToTrackTitle();
+            Channel channel = _channelRepository.GetChannelOrDefault(channelId);
+
+            if (channel == null)
+            {
+                return ChannelNotFound(channelId);
+            }
+
+            return _trackRepository.CurrentChannelTrackFor(channel).Track.ToTrackTitle();
         }
 
-        [HttpGet("Queue")]
-        public IEnumerable<TrackTitle> Queue()
+        [HttpGet("Queue/{channelId}")]
+        public ActionResult<IEnumerable<TrackTitle>> Queue(string channelId)
         {
-            return _trackRepository.TrackQueue.Select(track => track.ToTrackTitle());
+            Channel channel = _channelRepository.GetChannelOrDefault(channelId);
+
+            if (channel == null)
+            {
+                return ChannelNotFound(channelId);
+            }
+
+            return Ok(_trackRepository.ChannelTrackQueueFor(channel)
+                                      .Select(channelTrack => channelTrack.Track.ToTrackTitle()));
+        }
+
+        private ActionResult ChannelNotFound(string channelId)
+        {
+            return NotFound($"Channel ID '{channelId}' does not exist.");
         }
     }
 }

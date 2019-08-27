@@ -24,6 +24,12 @@
   <ItemGroup>
     <Compile Remove="Migrations\20190827111724_Tracks.cs" />
     <Compile Remove="Migrations\20190827111724_Tracks.Designer.cs" />
+    <Compile Remove="Migrations\20190827172520_Channels.cs" />
+    <Compile Remove="Migrations\20190827172520_Channels.Designer.cs" />
+    <Compile Remove="Migrations\20190827195627_Channels.cs" />
+    <Compile Remove="Migrations\20190827195627_Channels.Designer.cs" />
+    <Compile Remove="Migrations\20190828083725_Channels.cs" />
+    <Compile Remove="Migrations\20190828083725_Channels.Designer.cs" />
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
