@@ -16,12 +16,12 @@
             _trackStatusService = trackStatusService;
         }
 
-        public async Task Played()
+        public override async Task OnConnectedAsync()
         {
             await SyncClientToCurrentVideo();
         }
 
-        public async Task Connected()
+        public async Task Played()
         {
             await SyncClientToCurrentVideo();
         }

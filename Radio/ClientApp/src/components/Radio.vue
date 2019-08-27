@@ -58,7 +58,7 @@ export default {
         }
       });
 
-      this.connection.start().then(() => this.connection.invoke("Connected"));
+      this.connection.start();
     },
     playing() {
       if (!this.isPlaying) {
