@@ -7,14 +7,6 @@
 <script>
 import { Component, Vue } from "vue-property-decorator";
 import Main from "./components/Main.vue";
-import BootstrapVue from "bootstrap-vue";
-import VueYoutube from "vue-youtube";
-
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-vue/dist/bootstrap-vue.css";
-
-Vue.use(BootstrapVue);
-Vue.use(VueYoutube);
 
 export default {
   components: {
