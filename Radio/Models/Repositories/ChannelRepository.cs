@@ -14,7 +14,7 @@
             _appDbContext = appDbContext;
         }
 
-        private IQueryable<Channel> Channels => _appDbContext.Channels;
+        public IQueryable<Channel> AllChannels => _appDbContext.Channels;
 
         public async Task AddChannel(Channel channel)
         {
@@ -24,12 +24,12 @@
 
         public Channel GetChannelOrDefault(string id)
         {
-            return Channels.SingleOrDefault(channel => channel.Id == id);
+            return AllChannels.SingleOrDefault(channel => channel.Id == id);
         }
 
         public Channel GetChannel(string name, ushort discriminator = 0)
         {
-            return Channels.Single(channel => channel.Name == name && channel.Discriminator == discriminator);
+            return AllChannels.Single(channel => channel.Name == name && channel.Discriminator == discriminator);
         }
     }
 }

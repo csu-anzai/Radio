@@ -4,6 +4,6 @@
 
     public interface ITrackStatusService
     {
-        TrackStatus CurrentTrackStatus { get; }
+        TrackStatus CurrentTrackStatusFor(string channelId);
     }
 }

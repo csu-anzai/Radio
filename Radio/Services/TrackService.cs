@@ -1,82 +1,60 @@
 ﻿namespace Radio.Services
 {
     using System;
-    using System.Diagnostics;
+    using System.Collections.Concurrent;
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Microsoft.AspNetCore.SignalR;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
 
-    using Radio.Hubs;
+    using Radio.Hubs.Radio;
     using Radio.Models;
     using Radio.Models.Repositories;
 
-    using Timer = System.Timers.Timer;
-
-    public class TrackService : ITrackService, IHostedService, IDisposable
+    public class TrackService : IHostedService
     {
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly IHubContext<RadioHub, IRadioClient> _radioHub;
+        private readonly IRadioHubProxy _radioHubProxy;
 
-        private readonly Timer _timer;
+        private readonly TrackStatusService _trackStatusService;
 
-        private readonly Stopwatch _stopwatch;
+        private readonly ConcurrentDictionary<string, TrackTracker> _trackTrackerForChannel = new ConcurrentDictionary<string, TrackTracker>();
 
-        private Track _currentTrack;
-
-        public TrackService(IHubContext<RadioHub, IRadioClient> radioHub, IServiceProvider serviceProvider, TrackStatusService trackStatusService)
+        public TrackService(IServiceProvider serviceProvider, IRadioHubProxy radioHubProxy, TrackStatusService trackStatusService)
         {
             _serviceProvider = serviceProvider;
-            _radioHub = radioHub;
-            _timer = new Timer();
-            _stopwatch = new Stopwatch();
-
-            trackStatusService.RequestTrackStatus += (sender, e) => e.TrackStatus = CurrentTrackStatus;
+            _radioHubProxy = radioHubProxy;
+            _trackStatusService = trackStatusService;
         }
-
-        public TrackStatus CurrentTrackStatus => new TrackStatus(_currentTrack.Id, (int)_stopwatch.Elapsed.TotalSeconds);
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer.Elapsed += async (sender, e) => await NextTrack();
-            await NextTrack();
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            _timer.Stop();
-            _stopwatch.Stop();
-
-            return Task.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            _timer.Dispose();
-        }
-
-        private async Task NextTrack()
-        {
             using (IServiceScope scope = _serviceProvider.CreateScope())
             {
-                var channelRepository = scope.ServiceProvider.GetService<IChannelRepository>();
-                var trackRepository = scope.ServiceProvider.GetService<ITrackRepository>();
+                IChannelRepository channelRepository = scope.ServiceProvider.GetService<IChannelRepository>();
 
-                Channel currentChannel = channelRepository.GetChannel(name: null, discriminator: 0);
-
-                await trackRepository.MoveToNextChannelTrack(currentChannel);
-                _currentTrack = trackRepository.CurrentChannelTrackFor(currentChannel).Track;
+                foreach (Channel channel in channelRepository.AllChannels)
+                {
+                    _trackTrackerForChannel[channel.Id] = new TrackTracker(_serviceProvider, _radioHubProxy, channel);
+                }
             }
 
-            await _radioHub.Clients.All.UpdateTrack(_currentTrack.Id);
+            foreach (TrackTracker trackTracker in _trackTrackerForChannel.Values)
+            {
+                await trackTracker.Start();
+            }
 
-            _timer.Stop();
-            _timer.Interval = _currentTrack.Length.TotalMilliseconds;
-            _timer.Start();
-            _stopwatch.Restart();
+            _trackStatusService.RequestTrackStatus += (sender, e) => e.TrackStatus = _trackTrackerForChannel[e.ChannelId].CurrentTrackStatus;
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            foreach (TrackTracker trackTracker in _trackTrackerForChannel.Values)
+            {
+                await trackTracker.Stop();
+            }
         }
     }
 }

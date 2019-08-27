@@ -7,7 +7,7 @@ namespace Radio
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
-    using Radio.Hubs;
+    using Radio.Hubs.Radio;
     using Radio.Models;
     using Radio.Models.Database;
     using Radio.Models.Repositories;
@@ -42,6 +42,9 @@ namespace Radio
 
             services.AddTransient<IChannelRepository, ChannelRepository>();
             services.AddTransient<ITrackRepository, TrackRepository>();
+
+            services.AddTransient<IRadioHubProxy, RadioHubProxy>();
+
             services.AddSingleton<TrackStatusService>();
             services.AddSingleton<ITrackStatusService>(serviceProvider => serviceProvider.GetService<TrackStatusService>());
             services.AddHostedService<TrackService>();
