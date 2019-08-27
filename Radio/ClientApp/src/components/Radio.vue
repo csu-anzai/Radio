@@ -54,9 +54,8 @@ export default {
         } else {
           this.player.loadVideoById(trackId, timeStampSeconds);
           this.currentTrackId = trackId;
+          this.updateTrackList();
         }
-
-        this.updateTrackList();
       });
 
       this.connection.start().then(() => this.connection.invoke("Connected"));

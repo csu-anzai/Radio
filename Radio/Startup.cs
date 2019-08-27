@@ -10,6 +10,7 @@ namespace Radio
     using Radio.Hubs;
     using Radio.Models;
     using Radio.Models.Database;
+    using Radio.Models.Repositories;
     using Radio.Services;
 
     using WebMarkupMin.AspNetCore2;
@@ -18,34 +19,31 @@ namespace Radio
     {
         private readonly IConfiguration _configuration;
 
-        private readonly IHostingEnvironment _webHostEnvironment;
-
-        public Startup(IConfiguration configuration, IHostingEnvironment webHostEnvironment)
+        public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
-            _webHostEnvironment = webHostEnvironment;
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppIdentityDbContext>(options => options.UseNpgsql(_configuration["Data:ConnectionString"]));
+            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_configuration["Data:ConnectionString"]));
 
             services.AddIdentity<AppUser, IdentityRole>(options =>
                     {
                         options.User.AllowedUserNameCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-._@/ ";
                         options.Password.RequireLowercase = false;
                     })
-                    .AddEntityFrameworkStores<AppIdentityDbContext>()
+                    .AddEntityFrameworkStores<AppDbContext>()
                     .AddDefaultTokenProviders();
 
             services.AddMvc();
             services.AddSignalR();
             services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
 
-            services.AddTransient(_ => _webHostEnvironment.ContentRootFileProvider);
-            services.AddTransient<ITrackLoader, TrackLoader>();
-            services.AddSingleton<ITrackService, TrackService>();
-            services.AddSingleton<ITrackQueue, TrackQueue>();
+            services.AddTransient<ITrackRepository, TrackRepository>();
+            services.AddSingleton<TrackStatusService>();
+            services.AddSingleton<ITrackStatusService>(serviceProvider => serviceProvider.GetService<TrackStatusService>());
+            services.AddHostedService<TrackService>();
 
             services.AddWebMarkupMin(options =>
                     {

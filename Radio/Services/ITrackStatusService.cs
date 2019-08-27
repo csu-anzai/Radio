@@ -2,7 +2,7 @@
 {
     using Radio.Models;
 
-    public interface ITrackService
+    public interface ITrackStatusService
     {
         TrackStatus CurrentTrackStatus { get; }
     }

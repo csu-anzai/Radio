@@ -1,36 +1,34 @@
 ﻿namespace Radio.ApiControllers
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using Microsoft.AspNetCore.Mvc;
 
     using Radio.Models;
-    using Radio.Services;
+    using Radio.Models.Repositories;
 
     [ApiController]
     [Route("[Controller]")]
     public class TrackController : ControllerBase
     {
-        private readonly ITrackQueue _trackQueue;
+        private readonly ITrackRepository _trackRepository;
 
-        private readonly ITrackService _trackService;
-
-        public TrackController(ITrackQueue trackQueue, ITrackService trackService)
+        public TrackController(ITrackRepository trackRepository)
         {
-            _trackQueue = trackQueue;
-            _trackService = trackService;
+            _trackRepository = trackRepository;
         }
 
         [HttpGet("Current")]
-        public Track Current()
+        public TrackTitle Current()
         {
-            return _trackService.CurrentTrack;
+            return _trackRepository.CurrentTrack.ToTrackTitle();
         }
 
         [HttpGet("Queue")]
-        public IEnumerable<Track> Queue()
+        public IEnumerable<TrackTitle> Queue()
         {
-            return _trackQueue.AllTracks;
+            return _trackRepository.TrackQueue.Select(track => track.ToTrackTitle());
         }
     }
 }

@@ -9,11 +9,11 @@
 
     public class RadioHub : Hub
     {
-        private readonly ITrackService _trackService;
+        private readonly ITrackStatusService _trackStatusService;
 
-        public RadioHub(ITrackService trackService)
+        public RadioHub(ITrackStatusService trackStatusService)
         {
-            _trackService = trackService;
+            _trackStatusService = trackStatusService;
         }
 
         public async Task Played()
@@ -28,7 +28,7 @@
 
         private async Task SyncClientToCurrentVideo()
         {
-            TrackStatus currentTrackStatus = _trackService.CurrentTrackStatus;
+            TrackStatus currentTrackStatus = _trackStatusService.CurrentTrackStatus;
             await Clients.Caller.SendAsync("SyncVideo", currentTrackStatus.CurrentTrackId, currentTrackStatus.TimeStampSeconds);
         }
     }

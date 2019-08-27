@@ -1,17 +1,23 @@
 ﻿namespace Radio.Services
 {
+    using System;
     using System.Diagnostics;
+    using System.Threading;
     using System.Threading.Tasks;
-    using System.Timers;
 
     using Microsoft.AspNetCore.SignalR;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
 
     using Radio.Hubs;
     using Radio.Models;
+    using Radio.Models.Repositories;
 
-    public class TrackService : ITrackService
+    using Timer = System.Timers.Timer;
+
+    public class TrackService : ITrackService, IHostedService, IDisposable
     {
-        private readonly ITrackQueue _trackQueue;
+        private readonly IServiceProvider _serviceProvider;
 
         private readonly IHubContext<RadioHub> _radioHub;
 
@@ -19,28 +25,53 @@
 
         private readonly Stopwatch _stopwatch;
 
-        public TrackService(ITrackQueue trackQueue, IHubContext<RadioHub> radioHub)
+        private Track _currentTrack;
+
+        public TrackService(IHubContext<RadioHub> radioHub, IServiceProvider serviceProvider, TrackStatusService trackStatusService)
         {
-            _trackQueue = trackQueue;
+            _serviceProvider = serviceProvider;
             _radioHub = radioHub;
             _timer = new Timer();
-            _timer.Elapsed += async (sender, e) => await NextTrack();
             _stopwatch = new Stopwatch();
 
-            NextTrack();
+            trackStatusService.RequestTrackStatus += (sender, e) => e.TrackStatus = CurrentTrackStatus;
         }
 
-        public TrackStatus CurrentTrackStatus => new TrackStatus(CurrentTrack.Id, (int)_stopwatch.Elapsed.TotalSeconds);
+        public TrackStatus CurrentTrackStatus => new TrackStatus(_currentTrack.Id, (int)_stopwatch.Elapsed.TotalSeconds);
 
-        public Track CurrentTrack { get; private set; }
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            _timer.Elapsed += async (sender, e) => await NextTrack();
+            await NextTrack();
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            _timer.Stop();
+            _stopwatch.Stop();
+
+            return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            _timer.Dispose();
+        }
 
         private async Task NextTrack()
         {
-            CurrentTrack = _trackQueue.PopNext();
-            await _radioHub.Clients.All.SendAsync("UpdateTrack", CurrentTrack.Id);
+            using (IServiceScope scope = _serviceProvider.CreateScope())
+            {
+                var trackRepository = scope.ServiceProvider.GetService<ITrackRepository>();
+
+                await trackRepository.MoveToNextTrack();
+                _currentTrack = trackRepository.CurrentTrack;
+            }
+
+            await _radioHub.Clients.All.SendAsync("UpdateTrack", _currentTrack.Id);
 
             _timer.Stop();
-            _timer.Interval = CurrentTrack.Length.TotalMilliseconds;
+            _timer.Interval = _currentTrack.Length.TotalMilliseconds;
             _timer.Start();
             _stopwatch.Restart();
         }
