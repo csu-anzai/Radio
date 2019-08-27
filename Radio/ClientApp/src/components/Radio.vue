@@ -27,7 +27,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import * as signalR from "@aspnet/signalr";
 
 export default {
-  props: ["showTrackList"],
+  props: ["showTrackList", "channelName", "channelDiscriminator"],
   data() {
     return {
       tracks: [],
@@ -35,18 +35,12 @@ export default {
     };
   },
   methods: {
-    ready() {
+    async ready() {
       this.connection = new signalR.HubConnectionBuilder()
         .withUrl("/radio")
         .build();
 
-      this.connection.on("UpdateTrack", (trackId) => {
-        if (this.isPlaying) {
-          this.player.loadVideoById(trackId);
-          this.currentTrackId = trackId;
-          this.updateTrackList();
-        }
-      });
+      this.connection.on("ChannelIdInfo", (channelId) => this.channelId = channelId);
 
       this.connection.on("SyncVideo", (trackId, timeStampSeconds) => {
         if (this.currentTrackId === trackId) {
@@ -58,7 +52,16 @@ export default {
         }
       });
 
-      this.connection.start();
+      this.connection.on("UpdateTrack", (trackId) => {
+        if (this.isPlaying) {
+          this.player.loadVideoById(trackId);
+          this.currentTrackId = trackId;
+          this.updateTrackList();
+        }
+      });
+
+      await this.connection.start();
+      this.connection.invoke("Negotiate", this.channelName, this.channelDiscriminator);
     },
     playing() {
       if (!this.isPlaying) {
@@ -70,8 +73,8 @@ export default {
       this.isPlaying = false;
     },
     async updateTrackList() {
-      this.currentTrack = await this.fetchAndUnwrapJson("/Track/Current");
-      this.tracks = await this.fetchAndUnwrapJson("/Track/Queue");
+      this.currentTrack = await this.$utilities.fetchAndUnwrapJson(`/Track/Current/${this.channelId}`);
+      this.tracks = await this.$utilities.fetchAndUnwrapJson(`/Track/Queue/${this.channelId}`);
     }
   },
   computed: {

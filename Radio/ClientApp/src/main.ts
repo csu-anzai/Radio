@@ -7,18 +7,14 @@ import VueYoutube from "vue-youtube";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
+import Utilities from "./utilities.js";
+
 Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
 Vue.use(VueYoutube);
 
-Vue.mixin({
-  methods: {
-    async fetchAndUnwrapJson(url) {
-      return (await fetch(url)).json();
-    }
-  }
-});
+Vue.prototype.$utilities = Utilities;
 
 new Vue({
   render: (h) => h(App),
