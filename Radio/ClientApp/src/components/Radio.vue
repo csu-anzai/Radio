@@ -69,18 +69,9 @@ export default {
     paused() {
       this.isPlaying = false;
     },
-    updateTrackList() {
-      fetch("/Track/Current").then((response) => {
-        response.json().then((data) => {
-          this.currentTrack = data;
-        });
-      });
-
-      fetch("/Track/Queue").then((response) => {
-        response.json().then((data) => {
-          this.tracks = data;
-        });
-      });
+    async updateTrackList() {
+      this.currentTrack = await this.fetchAndUnwrapJson("/Track/Current");
+      this.tracks = await this.fetchAndUnwrapJson("/Track/Queue");
     }
   },
   computed: {
