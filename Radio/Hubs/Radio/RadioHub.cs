@@ -33,11 +33,6 @@
 
         public async Task Negotiate(string channelName, ushort channelDiscriminator)
         {
-            if (channelName == "null") // SignalR client-side bug which doesn't permit null values
-            {
-                channelName = null;
-            }
-
             Channel channel = _channelRepository.GetChannelOrDefault(channelName, channelDiscriminator);
 
             if (channel == null)

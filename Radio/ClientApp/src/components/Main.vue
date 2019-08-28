@@ -29,7 +29,7 @@
         </div>
       </nav>
     </header>
-    <Radio :showTrackList="showTrackList" channelName="null" :channelDiscriminator="0"/>
+    <Radio :showTrackList="showTrackList" channelName="__auto" :channelDiscriminator="0"/>
   </div>
 </template>
 
