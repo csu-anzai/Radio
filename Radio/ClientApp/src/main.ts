@@ -3,11 +3,13 @@ import VueRouter from "vue-router";
 import App from "./App.vue";
 
 import BootstrapVue from "bootstrap-vue";
+// @ts-ignore
 import VueYoutube from "vue-youtube";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
+// @ts-ignore
 import Utilities from "./utilities.js";
 
 import Main from "./components/Main.vue";
