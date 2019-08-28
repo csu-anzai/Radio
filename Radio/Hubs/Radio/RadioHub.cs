@@ -38,7 +38,12 @@
                 channelName = null;
             }
 
-            Channel channel = _channelRepository.GetChannel(channelName, channelDiscriminator);
+            Channel channel = _channelRepository.GetChannelOrDefault(channelName, channelDiscriminator);
+
+            if (channel == null)
+            {
+                throw new HubException($"Channel {channelName}-{channelDiscriminator} does not exist.");
+            }
 
             ClientChannelIds[Context.ConnectionId] = channel.Id;
             await Groups.AddToGroupAsync(Context.ConnectionId, channel.Id);

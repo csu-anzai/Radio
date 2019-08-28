@@ -52,10 +52,10 @@
         {
             using (IServiceScope scope = _serviceProvider.CreateScope())
             {
-                ITrackRepository trackRepository = scope.ServiceProvider.GetService<ITrackRepository>();
+                IChannelTrackRepository channelTrackRepository = scope.ServiceProvider.GetService<IChannelTrackRepository>();
 
-                await trackRepository.MoveToNextChannelTrack(_currentChannel);
-                _currentTrack = trackRepository.CurrentChannelTrackFor(_currentChannel).Track;
+                await channelTrackRepository.MoveToNextTrack(_currentChannel);
+                _currentTrack = channelTrackRepository.CurrentChannelTrackFor(_currentChannel).Track;
 
                 await _radioHubProxy.UpdateTrack(_currentChannel, _currentTrack);
             }

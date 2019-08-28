@@ -1,7 +1,8 @@
 ﻿namespace Radio.Models.Repositories
 {
     using System.Linq;
-    using System.Threading.Tasks;
+
+    using Microsoft.EntityFrameworkCore;
 
     using Radio.Models.Database;
 
@@ -14,22 +15,18 @@
             _appDbContext = appDbContext;
         }
 
-        public IQueryable<Channel> AllChannels => _appDbContext.Channels;
+        public IQueryable<Channel> AllChannels => _appDbContext.Channels
+                                                               .Include(channel => channel.ChannelTracks)
+                                                               .ThenInclude(channelTrack => channelTrack.Track);
 
-        public async Task AddChannel(Channel channel)
+        public bool ChannelExists(string channelId)
         {
-            _appDbContext.Channels.Add(channel);
-            await _appDbContext.SaveChangesAsync();
+            return _appDbContext.Channels.Any(channel => channel.Id == channelId);
         }
 
-        public Channel GetChannelOrDefault(string id)
+        public Channel GetChannelOrDefault(string name, ushort discriminator)
         {
-            return AllChannels.SingleOrDefault(channel => channel.Id == id);
-        }
-
-        public Channel GetChannel(string name, ushort discriminator = 0)
-        {
-            return AllChannels.Single(channel => channel.Name == name && channel.Discriminator == discriminator);
+            return _appDbContext.Channels.SingleOrDefault(channel => channel.Name == name && channel.Discriminator == discriminator);
         }
     }
 }

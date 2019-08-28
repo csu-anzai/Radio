@@ -14,39 +14,43 @@
     {
         private readonly IChannelRepository _channelRepository;
 
-        private readonly ITrackRepository _trackRepository;
+        private readonly IChannelTrackRepository _channelTrackRepository;
 
-        public TrackController(IChannelRepository channelRepository, ITrackRepository trackRepository)
+        public TrackController(IChannelRepository channelRepository, IChannelTrackRepository channelTrackRepository)
         {
             _channelRepository = channelRepository;
-            _trackRepository = trackRepository;
+            _channelTrackRepository = channelTrackRepository;
         }
 
         [HttpGet("Current/{channelId}")]
         public ActionResult<TrackTitle> Current(string channelId)
         {
-            Channel channel = _channelRepository.GetChannelOrDefault(channelId);
-
-            if (channel == null)
+            if (!ChannelExists(channelId))
             {
                 return ChannelNotFound(channelId);
             }
 
-            return _trackRepository.CurrentChannelTrackFor(channel).Track.ToTrackTitle();
+            return _channelTrackRepository.CurrentChannelTrackFor(channelId)
+                                          .Track
+                                          .ToTrackTitle();
         }
 
         [HttpGet("Queue/{channelId}")]
         public ActionResult<IEnumerable<TrackTitle>> Queue(string channelId)
         {
-            Channel channel = _channelRepository.GetChannelOrDefault(channelId);
-
-            if (channel == null)
+            if (!ChannelExists(channelId))
             {
                 return ChannelNotFound(channelId);
             }
 
-            return Ok(_trackRepository.ChannelTrackQueueFor(channel)
-                                      .Select(channelTrack => channelTrack.Track.ToTrackTitle()));
+            return Ok(_channelTrackRepository.ChannelTrackQueueFor(channelId)
+                                             .Select(channelTrack => channelTrack.Track.ToTrackTitle())
+            );
+        }
+
+        private bool ChannelExists(string channelId)
+        {
+            return _channelRepository.ChannelExists(channelId);
         }
 
         private ActionResult ChannelNotFound(string channelId)

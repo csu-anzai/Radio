@@ -41,7 +41,7 @@ namespace Radio
             services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
 
             services.AddTransient<IChannelRepository, ChannelRepository>();
-            services.AddTransient<ITrackRepository, TrackRepository>();
+            services.AddTransient<IChannelTrackRepository, ChannelTrackRepository>();
 
             services.AddTransient<IRadioHubProxy, RadioHubProxy>();
 
