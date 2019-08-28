@@ -29,7 +29,7 @@
         </div>
       </nav>
     </header>
-    <Radio :showTrackList="showTrackList" channelName="__auto" :channelDiscriminator="0"/>
+    <Radio :showTrackList="showTrackList" :channelName="channelName" :channelDiscriminator="channelDiscriminator"/>
   </div>
 </template>
 
@@ -38,6 +38,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import Radio from "./Radio.vue";
 
 export default {
+  props: ["channelName", "channelDiscriminator"],
   data() {
     return {
       showTrackList: true

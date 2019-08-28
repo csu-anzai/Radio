@@ -1,18 +1,13 @@
 <template>
   <div id="app">
-    <Main/>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
 import { Component, Vue } from "vue-property-decorator";
-import Main from "./components/Main.vue";
 
-export default {
-  components: {
-    Main
-  }
-};
+export default { };
 </script>
 
 <style>
