@@ -38,6 +38,7 @@ export default {
     async ready() {
       this.connection = new signalR.HubConnectionBuilder()
         .withUrl("/radio")
+        .configureLogging(signalR.LogLevel.None)
         .build();
 
       this.connection.on("ChannelIdInfo", (channelId) => this.channelId = channelId);
