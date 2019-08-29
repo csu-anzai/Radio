@@ -7,9 +7,15 @@
           Radio
         </a>
 
-        <button type="button" class="btn" :class="{ 'btn-success': showTrackList, 'btn-danger': !showTrackList }" @click="toggleTrackList" data-toggle="button" aria-pressed="true" autocomplete="off">
-          Track List
-          </button>
+        <button
+          type="button"
+          class="btn"
+          :class="{ 'btn-success': showTrackList, 'btn-danger': !showTrackList }"
+          @click="toggleTrackList"
+          data-toggle="button"
+          aria-pressed="true"
+          autocomplete="off"
+        >Track List</button>
 
         <button
           class="navbar-toggler"
@@ -24,12 +30,40 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarText">
-          <ul class="navbar-nav mr-auto">
-          </ul>
+          <ul class="navbar-nav mr-auto"></ul>
         </div>
+
+        <template v-if="isLoggedIn">
+          <button
+            type="button"
+            class="btn btn-warning dropdown-toggle dropdown-toggle-split"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <img v-bind:src="userImage" width="30" height="30" />
+            {{ username }}
+            <span class="sr-only">Toggle Dropdown</span>
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#">Log out</a>
+          </div>
+        </template>
+        <template v-else>
+          <button
+            type="button"
+            class="btn btn-warning">
+            <img v-bind:src="userImage" width="30" height="30" />
+            {{ username }}
+          </button>
+        </template>
       </nav>
     </header>
-    <Radio :showTrackList="showTrackList" :channelName="channelName" :channelDiscriminator="channelDiscriminator"/>
+    <Radio
+      :showTrackList="showTrackList"
+      :channelName="channelName"
+      :channelDiscriminator="channelDiscriminator"
+    />
   </div>
 </template>
 
@@ -39,9 +73,20 @@ import Radio from "./Radio.vue";
 
 export default {
   props: ["channelName", "channelDiscriminator"],
+  async beforeCreate() {
+    this.isLoggedIn = await this.$utilities.fetchAndUnwrapJson("/user/isLoggedIn");
+
+    const { imageUrl, username } = await this.$utilities.fetchAndUnwrapJson("/user/thumbnail");
+
+    this.userImage = imageUrl;
+    this.username = username;
+  },
   data() {
     return {
-      showTrackList: true
+      showTrackList: true,
+      isLoggedIn: false,
+      userImage: null,
+      username: null
     };
   },
   components: {
