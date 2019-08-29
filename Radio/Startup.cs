@@ -12,6 +12,7 @@ namespace Radio
     using Radio.Models.Repositories;
     using Radio.Models.User;
     using Radio.Services;
+    using Radio.Services.FileProviders;
 
     using WebMarkupMin.AspNetCore2;
 
@@ -19,9 +20,12 @@ namespace Radio
     {
         private readonly IConfiguration _configuration;
 
-        public Startup(IConfiguration configuration)
+        private readonly IHostingEnvironment _hostingEnvironment;
+
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             _configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -39,6 +43,8 @@ namespace Radio
             services.AddMvc();
             services.AddSignalR();
             services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
+
+            services.AddTransient<IWebRootFileProvider, WebRootFileProvider>(serviceProvider => new WebRootFileProvider(_hostingEnvironment.WebRootFileProvider));
 
             services.AddTransient<IChannelRepository, ChannelRepository>();
             services.AddTransient<IChannelTrackRepository, ChannelTrackRepository>();
