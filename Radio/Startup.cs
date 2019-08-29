@@ -8,9 +8,9 @@ namespace Radio
     using Microsoft.Extensions.DependencyInjection;
 
     using Radio.Hubs.Radio;
-    using Radio.Models;
     using Radio.Models.Database;
     using Radio.Models.Repositories;
+    using Radio.Models.User;
     using Radio.Services;
 
     using WebMarkupMin.AspNetCore2;

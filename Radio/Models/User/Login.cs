@@ -1,4 +1,4 @@
-﻿namespace Radio.Models
+﻿namespace Radio.Models.User
 {
     using System.ComponentModel.DataAnnotations;
 
