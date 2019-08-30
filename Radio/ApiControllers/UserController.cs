@@ -19,11 +19,13 @@
             _webRootFileProvider = webRootFileProvider;
         }
 
+        [HttpGet]
         public bool IsLoggedIn()
         {
             return User.FindFirst(ClaimTypes.NameIdentifier) != null;
         }
 
+        [HttpGet]
         public UserThumbnail Thumbnail()
         {
             Claim idClaim = User.FindFirst(ClaimTypes.NameIdentifier);

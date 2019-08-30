@@ -14,6 +14,8 @@ namespace Radio
     using Radio.Services;
     using Radio.Services.FileProviders;
 
+    using Swashbuckle.AspNetCore.Swagger;
+
     using WebMarkupMin.AspNetCore2;
 
     public class Startup
@@ -63,6 +65,13 @@ namespace Radio
                     })
                     .AddHtmlMinification(options => options.MinificationSettings.RemoveRedundantAttributes = true)
                     .AddHttpCompression();
+
+            services.AddSwaggerGen(options => options.SwaggerDoc("v1",
+                                                                 new Info
+                                                                 {
+                                                                     Title = "Radio API",
+                                                                     Version = "v1"
+                                                                 }));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -70,6 +79,9 @@ namespace Radio
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                app.UseSwagger();
+                app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Radio API v1"));
             }
 
             app.UseStaticFiles();

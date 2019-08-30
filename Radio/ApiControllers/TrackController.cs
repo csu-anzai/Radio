@@ -9,7 +9,7 @@
     using Radio.Models.Repositories;
 
     [ApiController]
-    [Route("[Controller]")]
+    [Route("[Controller]/[Action]")]
     public class TrackController : ControllerBase
     {
         private readonly IChannelRepository _channelRepository;
@@ -22,7 +22,7 @@
             _channelTrackRepository = channelTrackRepository;
         }
 
-        [HttpGet("Current/{channelId}")]
+        [HttpGet("{channelId}")]
         public ActionResult<TrackTitle> Current(string channelId)
         {
             if (!ChannelExists(channelId))
@@ -35,7 +35,7 @@
                                           .ToTrackTitle();
         }
 
-        [HttpGet("Queue/{channelId}")]
+        [HttpGet("{channelId}")]
         public ActionResult<IEnumerable<TrackTitle>> Queue(string channelId)
         {
             if (!ChannelExists(channelId))
