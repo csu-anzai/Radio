@@ -74,8 +74,8 @@ export default {
       this.isPlaying = false;
     },
     async updateTrackList() {
-      this.currentTrack = await this.$utilities.fetchAndUnwrapJson(`/Track/Current/${this.channelId}`);
-      this.tracks = await this.$utilities.fetchAndUnwrapJson(`/Track/Queue/${this.channelId}`);
+      this.currentTrack = await this.$utilities.fetchAndUnwrapJson(`/track/current/${this.channelId}`);
+      this.tracks = await this.$utilities.fetchAndUnwrapJson(`/track/queue/${this.channelId}`);
     }
   },
   computed: {

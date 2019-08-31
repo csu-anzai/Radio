@@ -72,7 +72,7 @@ export default {
   props: ["channelName", "channelDiscriminator"],
   async beforeCreate() {
     this.isLoggedIn = await this.$utilities.fetchAndUnwrapJson(
-      "/user/isLoggedIn"
+      "/user/is-logged-in"
     );
 
     const { imageUrl, username } = await this.$utilities.fetchAndUnwrapJson(

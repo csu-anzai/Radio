@@ -3,11 +3,13 @@ namespace Radio
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc.ApplicationModels;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
     using Radio.Hubs.Radio;
+    using Radio.Infrastructure;
     using Radio.Models.Database;
     using Radio.Models.Repositories;
     using Radio.Models.User;
@@ -42,7 +44,7 @@ namespace Radio
                     .AddEntityFrameworkStores<AppDbContext>()
                     .AddDefaultTokenProviders();
 
-            services.AddMvc();
+            services.AddMvc(options => options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer())));
             services.AddSignalR();
             services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
 

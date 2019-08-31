@@ -110,7 +110,7 @@ export default {
     };
   },
   async beforeRouteEnter(to, from, next) {
-    if (await (await fetch("/user/isLoggedIn")).json()) {
+    if (await (await fetch("/user/is-logged-in")).json()) {
       next("/");
     } else {
       next();
