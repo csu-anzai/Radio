@@ -34,28 +34,24 @@
         </div>
 
         <template v-if="isLoggedIn">
-          <button
-            type="button"
-            class="btn btn-warning dropdown-toggle dropdown-toggle-split"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            <img v-bind:src="userImage" width="30" height="30" />
-            {{ username }}
-            <span class="sr-only">Toggle Dropdown</span>
-          </button>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="#">Log out</a>
-          </div>
+          <b-dropdown class="m-md-2" variant="warning">
+            <template slot="button-content">
+              <img v-bind:src="userImage" width="30" height="30" />
+              {{ username }}
+            </template>
+            <b-dropdown-item @click="logOut">Log Out</b-dropdown-item>
+          </b-dropdown>
         </template>
         <template v-else>
-          <button
-            type="button"
-            class="btn btn-warning">
-            <img v-bind:src="userImage" width="30" height="30" />
-            {{ username }}
-          </button>
+          <b-dropdown class="m-md-2" variant="warning">
+            <template slot="button-content">
+              <img v-bind:src="userImage" width="30" height="30" />
+              {{ username }}
+            </template>
+
+            <b-dropdown-item :to="{ name: 'login', query: { redirect: $route.path } }">Login</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'register', query: { redirect: $route.path } }">Register</b-dropdown-item>
+          </b-dropdown>
         </template>
       </nav>
     </header>
@@ -70,13 +66,18 @@
 <script>
 import { Component, Prop, Vue } from "vue-property-decorator";
 import Radio from "./Radio.vue";
+import axios from "axios";
 
 export default {
   props: ["channelName", "channelDiscriminator"],
   async beforeCreate() {
-    this.isLoggedIn = await this.$utilities.fetchAndUnwrapJson("/user/isLoggedIn");
+    this.isLoggedIn = await this.$utilities.fetchAndUnwrapJson(
+      "/user/isLoggedIn"
+    );
 
-    const { imageUrl, username } = await this.$utilities.fetchAndUnwrapJson("/user/thumbnail");
+    const { imageUrl, username } = await this.$utilities.fetchAndUnwrapJson(
+      "/user/thumbnail"
+    );
 
     this.userImage = imageUrl;
     this.username = username;
@@ -95,6 +96,15 @@ export default {
   methods: {
     toggleTrackList() {
       this.showTrackList = !this.showTrackList;
+    },
+    logOut() {
+      axios.post("/account/logout")
+      .then((response) => {
+        this.$router.go();
+      })
+      .catch((error) => {
+        this.$router.go();
+      });
     }
   }
 };

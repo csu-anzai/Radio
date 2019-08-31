@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import App from "./App.vue";
 
 import BootstrapVue from "bootstrap-vue";
 // @ts-ignore
@@ -12,7 +11,7 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 // @ts-ignore
 import Utilities from "./utilities.js";
 
-import Main from "./components/Main.vue";
+import App from "./App.vue";
 
 Vue.config.productionTip = false;
 
@@ -22,6 +21,8 @@ Vue.use(VueYoutube);
 
 Vue.prototype.$utilities = Utilities;
 
+const main = () => import("./components/Main.vue");
+
 new Vue({
   render: (h) => h(App),
   router: new VueRouter({
@@ -29,15 +30,31 @@ new Vue({
     routes: [
       {
         path: "/channel/:channelName/:channelDiscriminator(\\d{1,5})?",
-        component: Main,
+        component: main,
         props: (route) => ({
           channelName: route.params.channelName,
           channelDiscriminator: route.params.channelDiscriminator || 0
         })
       },
       {
+        name: "register",
+        path: "/register",
+        component: () => import("./components/Register.vue"),
+        props: (route) => ({
+          redirect: route.query.redirect || "/"
+        })
+      },
+      {
+        name: "login",
+        path: "/login",
+        component: () => import("./components/Login.vue"),
+        props: (route) => ({
+          redirect: route.query.redirect || "/"
+        })
+      },
+      {
         path: "*",
-        component: Main,
+        component: main,
         props: (route) => ({
           channelName: "__auto",
           channelDiscriminator: 0

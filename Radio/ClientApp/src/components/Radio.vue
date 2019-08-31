@@ -90,7 +90,7 @@ export default {
 div.main {
   display: grid;
   grid-template-rows: 1fr;
-  height: 94.25vh;
+  height: 92.25vh;
 }
 
 div.main.video-and-track-list {
