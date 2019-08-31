@@ -1,22 +1,21 @@
 ﻿namespace Radio.ApiControllers
 {
-    using System.Linq;
     using System.Security.Claims;
 
     using Microsoft.AspNetCore.Mvc;
 
     using Radio.Models.User;
-    using Radio.Services.FileProviders;
+    using Radio.Services;
 
     [ApiController]
     [Route("[Controller]/[Action]")]
     public class UserController : ControllerBase
     {
-        private readonly IWebRootFileProvider _webRootFileProvider;
+        private readonly IUserImageService _userImageService;
 
-        public UserController(IWebRootFileProvider webRootFileProvider)
+        public UserController(IUserImageService userImageService)
         {
-            _webRootFileProvider = webRootFileProvider;
+            _userImageService = userImageService;
         }
 
         [HttpGet]
@@ -38,11 +37,9 @@
             string id = idClaim.Value;
             string username = User.FindFirst(ClaimTypes.Name).Value;
 
-            string userImage = _webRootFileProvider.GetDirectoryContents("user-images")
-                                                   .Select(entry => entry.Name)
-                                                   .First(entryName => entryName.StartsWith(string.Concat(id, ".")));
+            string userImageFilename = _userImageService.UserImageFilenameForUserId(id);
 
-            return new UserThumbnail($"/user-images/{userImage}", username);
+            return new UserThumbnail($"/user-images/{userImageFilename}", username);
         }
     }
 }

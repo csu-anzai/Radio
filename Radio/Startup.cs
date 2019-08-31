@@ -47,6 +47,7 @@ namespace Radio
             services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
 
             services.AddTransient<IWebRootFileProvider, WebRootFileProvider>(serviceProvider => new WebRootFileProvider(_hostingEnvironment.WebRootFileProvider));
+            services.AddTransient<IUserImageService, UserImageService>();
 
             services.AddTransient<IChannelRepository, ChannelRepository>();
             services.AddTransient<IChannelTrackRepository, ChannelTrackRepository>();
