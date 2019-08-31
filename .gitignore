@@ -350,3 +350,5 @@ MigrationBackup/
 
 # ASP.NET Core Static Content
 lib/
+user-images/
+!user-images/anonymous.png
