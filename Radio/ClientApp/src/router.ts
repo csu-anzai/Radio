@@ -48,15 +48,15 @@ export default new VueRouter({
                     })
                 },
                 {
-                    path: "*",
+                    path: "/*",
                     component: radio,
                     meta: {
                         isChannelPage: true,
                     },
-                    props: (route) => ({
+                    props: {
                         channelName: "__auto",
                         channelDiscriminator: 0
-                    })
+                    }
                 }
             ]
         }

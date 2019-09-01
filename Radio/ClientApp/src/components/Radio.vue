@@ -28,6 +28,19 @@ import * as signalR from "@aspnet/signalr";
 
 export default {
   props: ["showTrackList", "channelName", "channelDiscriminator"],
+  beforeRouteEnter(to, from, next) {
+    next(async (component) => {
+      if (component.connection) {
+        await component.negotiateChannelId();
+      }
+    });
+  },
+  async beforeRouteUpdate(to, from, next) {
+      next();
+
+      await this.updateTrackList();
+      await this.negotiateChannelId();
+  },
   data() {
     return {
       tracks: [],
@@ -62,7 +75,7 @@ export default {
       });
 
       await this.connection.start();
-      this.connection.invoke("Negotiate", this.channelName, this.channelDiscriminator);
+      await this.negotiateChannelId();
     },
     playing() {
       if (!this.isPlaying) {
@@ -76,6 +89,9 @@ export default {
     async updateTrackList() {
       this.currentTrack = await this.$utilities.fetchAndUnwrapJson(`/track/current/${this.channelId}`);
       this.tracks = await this.$utilities.fetchAndUnwrapJson(`/track/queue/${this.channelId}`);
+    },
+    async negotiateChannelId() {
+      await this.connection.invoke("Negotiate", this.channelName, this.channelDiscriminator);
     }
   },
   computed: {

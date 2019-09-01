@@ -2,10 +2,10 @@
   <div id="app">
     <header>
       <nav class="navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">
+        <router-link class="navbar-brand" to="/">
           <img src="/icon/radio.png" width="30" height="30" class="d-inline-block align-top" />
           Radio
-        </a>
+        </router-link>
 
         <template v-if="isChannelPage">
           <button
