@@ -130,6 +130,7 @@ export default {
           RepeatPassword: this.repeatPassword
         })
         .then((response) => {
+          this.$emit("loggedIn");
           this.$router.push(this.redirect);
         })
         .catch((error) => {

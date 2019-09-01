@@ -98,6 +98,7 @@ export default {
           Password: this.password
         })
         .then((response) => {
+          this.$emit("loggedIn");
           this.$router.push(this.redirect);
         })
         .catch((error) => {

@@ -3,20 +3,20 @@
     <header>
       <nav class="navbar navbar-expand navbar-dark bg-dark">
         <a class="navbar-brand" href="/">
-          <img src="/icon/radio.png" width="30" height="30" class="d-inline-block align-top"/>
+          <img src="/icon/radio.png" width="30" height="30" class="d-inline-block align-top" />
           Radio
         </a>
 
         <template v-if="isChannelPage">
           <button
-          type="button"
-          class="btn"
-          :class="{ 'btn-success': showTrackList, 'btn-danger': !showTrackList }"
-          @click="toggleTrackList"
-          data-toggle="button"
-          aria-pressed="true"
-          autocomplete="off"
-        >Track List</button>
+            type="button"
+            class="btn"
+            :class="{ 'btn-success': showTrackList, 'btn-danger': !showTrackList }"
+            @click="toggleTrackList"
+            data-toggle="button"
+            aria-pressed="true"
+            autocomplete="off"
+          >Track List</button>
         </template>
 
         <button
@@ -33,7 +33,7 @@
 
         <div class="collapse navbar-collapse" id="navbarText">
           <ul class="navbar-nav mr-auto">
-
+              
           </ul>
         </div>
 
@@ -60,7 +60,7 @@
       </nav>
     </header>
 
-    <router-view :showTrackList="showTrackList"></router-view>
+    <router-view :showTrackList="showTrackList" @loggedIn="loggedIn"></router-view>
   </div>
 </template>
 
@@ -71,20 +71,15 @@ import axios from "axios";
 import Radio from "./Radio.vue";
 
 export default {
-  async beforeCreate() {
-    this.isLoggedIn = await this.$utilities.fetchAndUnwrapJson("/user/is-logged-in");
-
-    const { imageUrl, username } = await this.$utilities.fetchAndUnwrapJson("/user/thumbnail");
-
-    this.userImage = imageUrl;
-    this.username = username;
+  async created() {
+    await this.updateUserBadge();
   },
   data() {
     return {
-      showTrackList: true,
       isLoggedIn: false,
       userImage: null,
-      username: null
+      username: null,
+      showTrackList: true
     };
   },
   computed: {
@@ -93,16 +88,27 @@ export default {
       }
   },
   methods: {
+    async loggedIn() {
+        await this.updateUserBadge();
+    },
+    async updateUserBadge() {
+        this.isLoggedIn = await this.$utilities.fetchAndUnwrapJson("/user/is-logged-in");
+
+        const { imageUrl, username } = await this.$utilities.fetchAndUnwrapJson("/user/thumbnail");
+
+        this.userImage = imageUrl;
+        this.username = username;
+    },
     toggleTrackList() {
       this.showTrackList = !this.showTrackList;
     },
     logout() {
       axios.post("/account/logout")
-      .then((response) => {
-        this.$router.go();
+      .then(async (response) => {
+        await this.updateUserBadge();
       })
-      .catch((error) => {
-        this.$router.go();
+      .catch(async (error) => {
+        await this.updateUserBadge();
       });
     }
   }
