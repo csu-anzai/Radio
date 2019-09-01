@@ -111,7 +111,10 @@ export default {
   },
   async beforeRouteEnter(to, from, next) {
     if (await (await fetch("/user/is-logged-in")).json()) {
-      next("/");
+      next({
+        path: from.path,
+        replace: true
+      });
     } else {
       next();
     }

@@ -1,13 +1,14 @@
 <template>
-  <div>
+  <div id="app">
     <header>
       <nav class="navbar navbar-expand navbar-dark bg-dark">
         <a class="navbar-brand" href="/">
-          <img src="/icon/radio.png" width="30" height="30" class="d-inline-block align-top" alt />
+          <img src="/icon/radio.png" width="30" height="30" class="d-inline-block align-top"/>
           Radio
         </a>
 
-        <button
+        <template v-if="isChannelPage">
+          <button
           type="button"
           class="btn"
           :class="{ 'btn-success': showTrackList, 'btn-danger': !showTrackList }"
@@ -16,6 +17,7 @@
           aria-pressed="true"
           autocomplete="off"
         >Track List</button>
+        </template>
 
         <button
           class="navbar-toggler"
@@ -30,22 +32,24 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarText">
-          <ul class="navbar-nav mr-auto"></ul>
+          <ul class="navbar-nav mr-auto">
+
+          </ul>
         </div>
 
         <template v-if="isLoggedIn">
           <b-dropdown class="m-md-2" variant="warning">
             <template slot="button-content">
-              <img v-bind:src="userImage" width="30" height="30" />
+              <img :src="userImage" width="30" height="30" />
               {{ username }}
             </template>
-            <b-dropdown-item @click="logOut">Log Out</b-dropdown-item>
+            <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
           </b-dropdown>
         </template>
         <template v-else>
           <b-dropdown class="m-md-2" variant="warning">
             <template slot="button-content">
-              <img v-bind:src="userImage" width="30" height="30" />
+              <img :src="userImage" width="30" height="30" />
               {{ username }}
             </template>
 
@@ -55,29 +59,22 @@
         </template>
       </nav>
     </header>
-    <Radio
-      :showTrackList="showTrackList"
-      :channelName="channelName"
-      :channelDiscriminator="channelDiscriminator"
-    />
+
+    <router-view :showTrackList="showTrackList"></router-view>
   </div>
 </template>
 
 <script>
 import { Component, Prop, Vue } from "vue-property-decorator";
-import Radio from "./Radio.vue";
 import axios from "axios";
 
-export default {
-  props: ["channelName", "channelDiscriminator"],
-  async beforeCreate() {
-    this.isLoggedIn = await this.$utilities.fetchAndUnwrapJson(
-      "/user/is-logged-in"
-    );
+import Radio from "./Radio.vue";
 
-    const { imageUrl, username } = await this.$utilities.fetchAndUnwrapJson(
-      "/user/thumbnail"
-    );
+export default {
+  async beforeCreate() {
+    this.isLoggedIn = await this.$utilities.fetchAndUnwrapJson("/user/is-logged-in");
+
+    const { imageUrl, username } = await this.$utilities.fetchAndUnwrapJson("/user/thumbnail");
 
     this.userImage = imageUrl;
     this.username = username;
@@ -90,14 +87,16 @@ export default {
       username: null
     };
   },
-  components: {
-    Radio
+  computed: {
+      isChannelPage() {
+          return this.$route.meta.isChannelPage;
+      }
   },
   methods: {
     toggleTrackList() {
       this.showTrackList = !this.showTrackList;
     },
-    logOut() {
+    logout() {
       axios.post("/account/logout")
       .then((response) => {
         this.$router.go();
