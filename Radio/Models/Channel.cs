@@ -15,6 +15,8 @@
 
         public ushort Discriminator { get; set; }
 
+        public string Description { get; set; }
+
         [Required]
         [ForeignKey(nameof(Owner))]
         public string OwnerId { get; set; }
