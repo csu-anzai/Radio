@@ -15,10 +15,11 @@ export default new VueRouter({
             component: Main,
             children: [
                 {
+                    name: "channel",
                     path: "/channel/:channelName/:channelDiscriminator(\\d{1,5})?",
                     component: radio,
                     meta: {
-                        isChannelPage: true,
+                        isRadioChannel: true
                     },
                     props: (route) => ({
                         channelName: route.params.channelName,
@@ -26,11 +27,19 @@ export default new VueRouter({
                     })
                 },
                 {
+                    name: "channels",
+                    path: "/channels",
+                    component: () => import("./components/Channels.vue"),
+                    meta: {
+                        isRadioChannel: false
+                    }
+                },
+                {
                     name: "register",
                     path: "/register",
                     component: () => import("./components/Register.vue"),
                     meta: {
-                        isChannelPage: false,
+                        isRadioChannel: false
                     },
                     props: (route) => ({
                         redirect: route.query.redirect || "/"
@@ -41,7 +50,7 @@ export default new VueRouter({
                     path: "/login",
                     component: () => import("./components/Login.vue"),
                     meta: {
-                        isChannelPage: false,
+                        isRadioChannel: false
                     },
                     props: (route) => ({
                         redirect: route.query.redirect || "/"
@@ -51,7 +60,7 @@ export default new VueRouter({
                     path: "/*",
                     component: radio,
                     meta: {
-                        isChannelPage: true,
+                        isRadioChannel: true
                     },
                     props: {
                         channelName: "__auto",

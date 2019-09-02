@@ -7,7 +7,7 @@
           Radio
         </router-link>
 
-        <template v-if="isChannelPage">
+        <template v-if="isRadioChannel">
           <button
             type="button"
             class="btn"
@@ -33,7 +33,7 @@
 
         <div class="collapse navbar-collapse" id="navbarText">
           <ul class="navbar-nav mr-auto">
-              
+              <router-link class="nav-link" active-class="active" :to="{ name: 'channels' }">Channel List</router-link>
           </ul>
         </div>
 
@@ -83,8 +83,8 @@ export default {
     };
   },
   computed: {
-      isChannelPage() {
-          return this.$route.meta.isChannelPage;
+      isRadioChannel() {
+          return this.$route.meta.isRadioChannel;
       }
   },
   methods: {
