@@ -6,6 +6,8 @@
     {
         IQueryable<Channel> AllChannels { get; }
 
+        IQueryable<Channel> ChannelsWithOwners { get; }
+
         bool ChannelExists(string channelId);
 
         Channel GetChannelOrDefault(string name, ushort discriminator);

@@ -2,6 +2,10 @@
 {
     public class UserThumbnail
     {
+        public UserThumbnail(AppUser user) : this($"/user-images/{user.Id}.png", user.UserName)
+        {
+        }
+
         public UserThumbnail(string imageUrl, string username)
         {
             ImageUrl = imageUrl;

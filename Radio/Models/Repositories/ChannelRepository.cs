@@ -19,6 +19,8 @@
                                                                .Include(channel => channel.ChannelTracks)
                                                                .ThenInclude(channelTrack => channelTrack.Track);
 
+        public IQueryable<Channel> ChannelsWithOwners => AllChannels.Include(channel => channel.Owner);
+
         public bool ChannelExists(string channelId)
         {
             return _appDbContext.Channels.Any(channel => channel.Id == channelId);
