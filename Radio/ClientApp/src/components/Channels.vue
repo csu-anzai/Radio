@@ -29,7 +29,7 @@ export default {
     const channels = await this.$utilities.fetchAndUnwrapJson("/channels/all");
 
     this.channels = channels.map((channel) => {
-        channel.url = this.channelUrl(channel);
+        channel.url = this.$utilities.channelUrl(channel);
         return channel;
     });
   },
@@ -37,17 +37,6 @@ export default {
     return {
       channels: []
     };
-  },
-  methods: {
-    channelUrl(channel) {
-      if (channel.name === "__auto") {
-          return "/";
-      } else if (channel.discriminator === 0) {
-          return `/channel/${channel.name}`;
-      } else {
-          return `/channel/${channel.name}/${channel.discriminator}`;
-      }
-    }
   }
 };
 </script>
