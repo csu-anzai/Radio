@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
 
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
 
@@ -81,6 +82,7 @@
             return BadRequest(ModelState);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Logout()
         {

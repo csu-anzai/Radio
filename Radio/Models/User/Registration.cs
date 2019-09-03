@@ -5,14 +5,14 @@
 
     public class Registration
     {
-        [Required]
+        [Required(ErrorMessage = "A username is required.")]
         public string Username { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A password is required.")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "You must repeat your password.")]
         [Compare(nameof(Password))]
         [DataType(DataType.Password)]
         [DisplayName("Repeat Password")]
