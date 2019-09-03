@@ -2,7 +2,9 @@
   <b-list-group>
     <b-list-group-item v-for="channel in channels" class="flex-column align-items-start">
       <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">{{ channel.name === '__auto' ? 'default' : channel.name }}</h5>
+        <h5 class="mb-1">
+          <router-link :to="channel.url">{{ channel.name === '__auto' ? 'default' : channel.name }}</router-link>
+        </h5>
         
         <small>
             <img :src="channel.owner.imageUrl" width="30" height="30"/>
@@ -11,11 +13,6 @@
       </div>
 
       <p class="mb-1">{{ channel.description }}</p>
-
-      <small>
-          Visit: 
-        <router-link :to="channel.url">{{ channel.url }}</router-link>
-      </small>
     </b-list-group-item>
   </b-list-group>
 </template>
